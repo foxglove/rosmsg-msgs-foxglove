@@ -2,7 +2,8 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import { parse, RosMsgDefinition } from "@foxglove/rosmsg";
+import { MessageDefinition } from "@foxglove/message-definition";
+import { parse } from "@foxglove/rosmsg";
 import { mkdir, readdir, readFile, writeFile } from "fs/promises";
 import { join, basename } from "path";
 import { format, Options } from "prettier";
@@ -21,14 +22,17 @@ async function main() {
   const distDir = join(__dirname, "..", "dist");
   const libFile = join(distDir, "index.js");
   const declFile = join(distDir, "index.d.ts");
-  const definitions: Record<string, RosMsgDefinition> = {};
+  const definitions: Record<string, MessageDefinition> = {};
 
   const msgFiles = await getMsgFiles(msgdefsPath);
   for (const filename of msgFiles) {
     const dataType = filenameToDataType(filename);
     const msgdef = await readFile(filename, { encoding: "utf8" });
     const schema = parse(msgdef);
-    (schema[0] as RosMsgDefinition).name = dataType;
+    if (schema.length < 1) {
+      throw new Error(`Failed to parse ${dataType} from ${filename}`);
+    }
+    schema[0]!.name = dataType;
     for (const entry of schema) {
       if (entry.name == undefined) {
         throw new Error(`Failed to parse ${dataType} from ${filename}`);
@@ -61,7 +65,7 @@ function filenameToDataType(filename: string): string {
   return `foxglove_msgs/${basename(filename, ".msg")}`;
 }
 
-function generateLibrary(definitions: Record<string, RosMsgDefinition>): string {
+function generateLibrary(definitions: Record<string, MessageDefinition>): string {
   return format(
     `const definitions = ${JSON.stringify(definitions)}
 
@@ -71,12 +75,12 @@ module.exports = { definitions };
   );
 }
 
-function generateDefinitions(definitions: Record<string, RosMsgDefinition>): string {
+function generateDefinitions(definitions: Record<string, MessageDefinition>): string {
   const entries = Object.keys(definitions)
     .sort()
-    .map((key) => `    "${key}": RosMsgDefinition;`)
+    .map((key) => `    "${key}": MessageDefinition;`)
     .join("\n");
-  return `import { RosMsgDefinition } from "@foxglove/rosmsg";
+  return `import { MessageDefinition } from "@foxglove/message-definition";
 
 declare module "@foxglove/rosmsg-msgs-foxglove" {
   type RosMsgFoxgloveDefinitions = {

@@ -1,6 +1,8 @@
-# rosmsg-msgs-foxglove
+# @foxglove/rosmsg-msgs-foxglove
 
-This library exports a map of ROS1 datatype string keys to [@foxglove/rosmsg](https://github.com/foxglove/rosmsg) `RosMsgDefinition` values for Foxglove ROS message definitions. The message definitions include all dependent message definitions, similar to the output of the `gendeps --cat` command.
+**NOTICE: This package is deprecated. It will be archived soon. Please use [@foxglove/schemas](https://github.com/foxglove/schemas) instead.**
+
+> This library exports a map of ROS 1 datatype string keys to [@foxglove/message-definition](https://github.com/foxglove/message-definition) `MessageDefinition` values for Foxglove ROS message definitions. The message definitions include all dependent message definitions, similar to the output of the `gendeps --cat` command.
 
 [![npm version](https://img.shields.io/npm/v/@foxglove/rosmsg-msgs-foxglove.svg?style=flat)](https://www.npmjs.com/package/@foxglove/rosmsg-msgs-foxglove)
 
