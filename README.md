@@ -8,7 +8,7 @@
 
 ## License
 
-@foxglove/rosmsg-msgs-foxglove is licensed under [MIT License](https://opensource.org/licenses/MIT).
+@foxglove/rosmsg-msgs-foxglove is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
 ## Releasing
 
